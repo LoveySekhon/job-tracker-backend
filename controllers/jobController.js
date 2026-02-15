@@ -42,37 +42,46 @@ const getJobs = (req, res, next) => {
   const status = req.query.status;
   const search = req.query.search;
 
-  let query = `
-    SELECT * FROM jobs
-    WHERE user_id = ?
-  `;
-
+  let baseQuery = `FROM jobs WHERE user_id = ?`;
   let queryParams = [userId];
 
   if (status) {
-    query += " AND status = ?";
+    baseQuery += " AND status = ?";
     queryParams.push(status);
   }
 
   if (search) {
-    query += " AND company LIKE ?";
+    baseQuery += " AND company LIKE ?";
     queryParams.push(`%${search}%`);
   }
 
-  query += " LIMIT ? OFFSET ?";
-  queryParams.push(limit, offset);
+  // Query 1: Get total count
+  const countQuery = `SELECT COUNT(*) as total ${baseQuery}`;
 
-  connection.query(query, queryParams, (err, results) => {
-    if (err) {
-      return next(err);
-    }
+  connection.query(countQuery, queryParams, (err, countResult) => {
+    if (err) return next(err);
 
-    res.status(200).json({
-      page,
-      limit,
-      count: results.length,
-      jobs: results
-    });
+    const totalRecords = countResult[0].total;
+    const totalPages = Math.ceil(totalRecords / limit);
+
+    // Query 2: Get paginated results
+    const dataQuery = `SELECT * ${baseQuery} LIMIT ? OFFSET ?`;
+
+    connection.query(
+      dataQuery,
+      [...queryParams, limit, offset],
+      (err, results) => {
+        if (err) return next(err);
+
+        res.status(200).json({
+          page,
+          limit,
+          totalRecords,
+          totalPages,
+          jobs: results
+        });
+      }
+    );
   });
 };
 
