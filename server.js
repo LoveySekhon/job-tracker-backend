@@ -216,7 +216,8 @@ app.use(errorHandler);
 // });
 
 // Start the server
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
+
 // Note: In production, consider using environment variables for the port and database credentials
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
