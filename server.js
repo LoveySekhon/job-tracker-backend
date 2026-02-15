@@ -44,6 +44,15 @@ app.use("/api/jobs", jobRoutes);
 //   });
 // };
 
+// Health Check Route 
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    status: "OK",
+    uptime: process.uptime(),
+    timestamp: new Date()
+  });
+});
+
 
 // Test Route
 app.get("/", (req, res) => {
