@@ -9,12 +9,20 @@ const authRoutes = require("./routes/authRoutes");
 const jobRoutes = require("./routes/jobRoutes");
 
 
+
 // jwt is imported to create and verify JSON Web Tokens for user authentication. It allows us to generate a token upon successful login, which can be used to authenticate subsequent requests to protected routes in the application.
 const jwt = require("jsonwebtoken");
 
 const connection = require("./db");
 const express = require("express");
+const cors = require("cors");
 const app = express();
+
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
+
 
 app.use(express.json());
 
