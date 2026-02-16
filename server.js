@@ -1,5 +1,4 @@
-// This code sets up a backend server for a job tracking application using Node.js and Express. It includes user authentication with JWT, routes for user registration and login, and protected routes for managing job applications. The server connects to a MySQL database to store user and job information. The code also includes middleware for verifying JWT tokens to secure protected routes.
-require("dotenv").config();
+
 
 // The verifyToken middleware is imported to protect certain routes by ensuring that the incoming requests contain a valid JWT token. This middleware checks the authorization header for a token, verifies it, and allows access to the route if the token is valid. If the token is missing or invalid, it responds with an appropriate error message.
 const verifyToken = require("./middleware/authMiddleware");
@@ -16,6 +15,8 @@ const jwt = require("jsonwebtoken");
 const connection = require("./db");
 const express = require("express");
 const cors = require("cors");
+require("dotenv").config();
+
 const app = express();
 
 app.use(
